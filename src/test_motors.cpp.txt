@@ -1,0 +1,134 @@
+#include <Arduino.h>
+#include "Motor.h"
+#include "commands.h"
+
+#define MAX_PWM 255
+#define BAUDRATE 57600
+
+#define leftBackMotorEN 5
+#define leftBackMotorIN1 4
+#define leftBackMotorIN2 6
+
+#define rightBackMotorEN 9
+#define rightBackMotorIN1 7
+#define rightBackMotorIN2 8
+
+#define leftFrontMotorEN 10  
+#define rightFrontMotorEN 11
+
+
+Motor leftBackMotor(leftBackMotorIN1, leftBackMotorIN2, leftBackMotorEN);
+Motor rightBackMotor(rightBackMotorIN1, rightBackMotorIN2, rightBackMotorEN);
+Motor leftFrontMotor(leftBackMotorIN1, leftBackMotorIN2, leftFrontMotorEN);
+Motor rightFrontMotor(rightBackMotorIN1, rightBackMotorIN2, rightFrontMotorEN);
+
+void setup()
+{
+
+    Serial.begin(BAUDRATE);
+
+// Initialize the motor controller if used */
+    leftBackMotor.init();
+    rightBackMotor.init();
+    leftFrontMotor.init();
+    rightFrontMotor.init();
+
+  
+
+}
+
+void loop () {
+
+    // leftFrontMotor.moveBackward(MAX_PWM);
+    // rightFrontMotor.moveBackward(MAX_PWM);
+    // Serial.println("Backward");
+    // delay(3000);
+    // leftFrontMotor.stop();
+    // rightFrontMotor.stop();
+    // Serial.println("Stop");
+    // delay(2000);
+    // leftFrontMotor.moveForward(MAX_PWM);
+    // rightFrontMotor.moveForward(MAX_PWM);
+    // Serial.println("Forward");
+    // delay(3000);
+    // leftFrontMotor.stop();
+    // rightFrontMotor.stop();
+    // Serial.println("Stop");
+    // delay(2000);
+
+    leftBackMotor.moveBackward(MAX_PWM);
+    rightBackMotor.moveBackward(MAX_PWM);
+    leftFrontMotor.moveBackward(MAX_PWM);
+    rightFrontMotor.moveBackward(MAX_PWM);
+    Serial.println("Backward");
+    delay(3000);
+    leftBackMotor.stop();
+    rightBackMotor.stop();
+    leftFrontMotor.stop();
+    rightFrontMotor.stop();
+    Serial.println("Stop");
+    delay(2000);
+    leftBackMotor.moveForward(MAX_PWM);
+    rightBackMotor.moveForward(MAX_PWM);
+    leftFrontMotor.moveForward(MAX_PWM);
+    rightFrontMotor.moveForward(MAX_PWM);
+    Serial.println("Forward");
+    delay(3000);
+    leftBackMotor.stop();
+    rightBackMotor.stop();
+    leftFrontMotor.stop();
+    rightFrontMotor.stop();
+    Serial.println("Stop");
+    delay(2000);
+}
+
+
+void setMotorSpeed(int i, int spd)
+{
+    unsigned char reverse = 0;
+
+    if (spd < 0)
+    {
+        spd = -spd;
+        reverse = 1;
+    }
+    if (spd > MAX_PWM)
+        spd = MAX_PWM;
+
+    if (i == LEFT)
+    {
+        if (reverse == 0)
+        {
+            leftBackMotor.moveForward(spd);
+            // leftFrontMotor.moveForward(spd);
+            analogWrite(leftFrontMotorEN, spd);
+        }
+        else if (reverse == 1)
+        {
+            leftBackMotor.moveBackward(spd);
+            // leftFrontMotor.moveBackward(spd);
+            analogWrite(leftFrontMotorEN, -spd);
+        }
+    }
+    else /*if (i == RIGHT) //no need for condition*/
+    {
+        if (reverse == 0)
+        {
+            rightBackMotor.moveForward(spd);
+            // rightFrontMotor.moveForward(spd);
+            analogWrite(rightFrontMotorEN, spd);
+        }
+        else if (reverse == 1)
+        {
+            rightBackMotor.moveBackward(spd);
+            // rightFrontMotor.moveBackward(spd);
+            analogWrite(rightFrontMotorEN, -spd);
+        }
+    }
+}
+
+void setMotorSpeeds(int leftSpeed, int rightSpeed)
+{
+    setMotorSpeed(LEFT, leftSpeed);
+    setMotorSpeed(RIGHT, rightSpeed);
+}

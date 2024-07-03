@@ -21,7 +21,7 @@ unsigned long nextPID = PID_INTERVAL;
 
 /* Stop the robot if it hasn't received a movement command
  in this number of milliseconds */
-#define AUTO_STOP_INTERVAL 10000
+#define AUTO_STOP_INTERVAL 4000
 long lastMotorCommand = AUTO_STOP_INTERVAL;
 
 /* Variable initialization */
@@ -44,19 +44,21 @@ char argv2[16];
 long arg1;
 long arg2;
 
-#define leftMotorEN 5
-#define leftMotorIN1 4
-#define leftMotorIN2 6
+#define leftBackMotorEN 5
+#define leftBackMotorIN1 4
+#define leftBackMotorIN2 6
 
-#define rightMotorEN 9
-#define rightMotorIN1 7
-#define rightMotorIN2 8
+#define rightBackMotorEN 9
+#define rightBackMotorIN1 7
+#define rightBackMotorIN2 8
 
-#define modeDirectionRightMotor 0
-#define modeDirectionLeftMotor 0
+#define leftFrontMotorEN 10  // TODO: change
+#define rightFrontMotorEN 11 // TODO: change
 
-Motor leftMotor(leftMotorIN1, leftMotorIN2, leftMotorEN);
-Motor rightMotor(rightMotorIN1, rightMotorIN2, rightMotorEN);
+Motor leftBackMotor(leftBackMotorIN1, leftBackMotorIN2, leftBackMotorEN);
+Motor rightBackMotor(rightBackMotorIN1, rightBackMotorIN2, rightBackMotorEN);
+Motor leftFrontMotor(leftBackMotorIN1, leftBackMotorIN2, leftFrontMotorEN);
+Motor rightFrontMotor(rightBackMotorIN1, rightBackMotorIN2, rightFrontMotorEN);
 
 
 
@@ -169,8 +171,10 @@ void setup()
     Serial.begin(BAUDRATE);
 
 // Initialize the motor controller if used */
-  leftMotor.init();
-  rightMotor.init();
+  leftBackMotor.init();
+  rightBackMotor.init();
+  leftFrontMotor.init();
+  rightFrontMotor.init();
 
   // set as inputs
   DDRD &= ~(1 << LEFT_ENC_PIN_A);
@@ -191,6 +195,7 @@ void setup()
 
   // enable PCINT1 and PCINT2 interrupt in the general interrupt mask
   PCICR |= (1 << PCIE1) | (1 << PCIE2);
+
 }
 
 void loop()
@@ -266,12 +271,12 @@ void loop()
 
 void setMotorSpeed(int i, int spd)
 {
-    unsigned char reverse = 0;
+    unsigned char reverse = 1;
 
     if (spd < 0)
     {
         spd = -spd;
-        reverse = 1;
+        reverse = 0;
     }
     if (spd > 255)
         spd = 255;
@@ -280,22 +285,30 @@ void setMotorSpeed(int i, int spd)
     {
         if (reverse == 0)
         {
-            leftMotor.moveForward(spd);
+            leftBackMotor.moveForward(spd);
+            leftFrontMotor.moveForward(spd);
+            // analogWrite(leftFrontMotorEN, spd);
         }
         else if (reverse == 1)
         {
-            leftMotor.moveBackward(spd);
+            leftBackMotor.moveBackward(spd);
+            leftFrontMotor.moveBackward(spd);
+            // analogWrite(leftFrontMotorEN, -spd);
         }
     }
     else /*if (i == RIGHT) //no need for condition*/
     {
         if (reverse == 0)
         {
-            rightMotor.moveForward(spd);
+            rightBackMotor.moveForward(spd);
+            rightFrontMotor.moveForward(spd);
+            // analogWrite(rightFrontMotorEN, spd);
         }
         else if (reverse == 1)
         {
-            rightMotor.moveBackward(spd);
+            rightBackMotor.moveBackward(spd);
+            rightFrontMotor.moveBackward(spd);
+            // analogWrite(rightFrontMotorEN, -spd);
         }
     }
 }
