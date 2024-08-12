@@ -1,7 +1,8 @@
 #include <Arduino.h>
 #include "Motor.h"
+#include "Battery.h"
 #include "commands.h"
-#define MAX_PWM 255
+#define MAX_PWM 150
 #include "encoder_driver.h"
 
 void setMotorSpeeds(int leftSpeed, int rightSpeed);
@@ -44,16 +45,16 @@ char argv2[16];
 long arg1;
 long arg2;
 
-#define leftBackMotorEN 5
-#define leftBackMotorIN1 4
-#define leftBackMotorIN2 6
+#define leftBackMotorEN 9
+#define leftBackMotorIN1 7
+#define leftBackMotorIN2 8
 
-#define rightBackMotorEN 9
-#define rightBackMotorIN1 7
-#define rightBackMotorIN2 8
+#define rightBackMotorEN 5
+#define rightBackMotorIN1 4
+#define rightBackMotorIN2 6
 
-#define leftFrontMotorEN 10  // TODO: change
-#define rightFrontMotorEN 11 // TODO: change
+#define leftFrontMotorEN 10  
+#define rightFrontMotorEN 11 
 
 Motor leftBackMotor(leftBackMotorIN1, leftBackMotorIN2, leftBackMotorEN);
 Motor rightBackMotor(rightBackMotorIN1, rightBackMotorIN2, rightBackMotorEN);
@@ -199,7 +200,7 @@ void setup()
 }
 
 void loop()
-{
+{   
     while (Serial.available() > 0)
   {
 
