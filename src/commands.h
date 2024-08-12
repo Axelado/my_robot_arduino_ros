@@ -19,6 +19,7 @@
 #define UPDATE_PID     'u'
 #define DIGITAL_WRITE  'w'
 #define ANALOG_WRITE   'x'
+#define GET_BATTERY_VOLTAGE 'v'
 #define LEFT            0
 #define RIGHT           1
 

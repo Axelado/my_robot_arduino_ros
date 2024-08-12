@@ -61,7 +61,14 @@ Motor rightBackMotor(rightBackMotorIN1, rightBackMotorIN2, rightBackMotorEN);
 Motor leftFrontMotor(leftBackMotorIN1, leftBackMotorIN2, leftFrontMotorEN);
 Motor rightFrontMotor(rightBackMotorIN1, rightBackMotorIN2, rightFrontMotorEN);
 
+#define batterryVoltageReadPin A1
+#define batteryCloseCircuitPin 12
+#define batteryLowBatteryVoltage 6.8
+#define batteryR1Value 295000
+#define batteryR2Value 220000
 
+Battery battery(batterryVoltageReadPin, batteryCloseCircuitPin, batteryLowBatteryVoltage, batteryR1Value, batteryR2Value);
+float batteryVoltage = 0;
 
 /* Clear the current command parameters */
 void resetCommand()
@@ -160,6 +167,9 @@ int runCommand()
         Ko = pid_args[3];
         Serial.println("OK");
         break;
+    case GET_BATTERY_VOLTAGE:
+        Serial.println(batteryVoltage);
+        break;
     default:
         Serial.println("Invalid Command");
         break;
@@ -176,6 +186,9 @@ void setup()
   rightBackMotor.init();
   leftFrontMotor.init();
   rightFrontMotor.init();
+
+// Initialize the batterry
+  battery.init();
 
   // set as inputs
   DDRD &= ~(1 << LEFT_ENC_PIN_A);
@@ -201,6 +214,7 @@ void setup()
 
 void loop()
 {   
+    batteryVoltage = battery.manageBattery();
     while (Serial.available() > 0)
   {
 
